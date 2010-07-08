@@ -2,47 +2,9 @@
 
 . ./config.params.sh
 
-### Parse stuff :V
+parse_input "$@"
 
-while [ ! -z "$1" ]
-do
-   prefix="`echo $1 | sed -e 's|^--prefix=\(\S\S*\)$|\1|' -e 's|\(\S\S*\)/|\1|'`"
-
-   if [ "$prefix" != "$1" ]; then
-      PREFIX="$prefix"
-      shift
-      continue
-   fi
-
-   case "$1" in
-
-      --enable-*)
-         enable=`echo $1 | sed 's|^--enable-||'`
-         [ -z "`echo $COMMAND_LINE_OPTS | grep -i $enable`" ] && print_help && exit 1
-         eval HAVE_`echo $enable | tr '[a-z]' '[A-Z]'`=yes
-         ;;
-
-      --disable-*)
-         disable=`echo $1 | sed 's|^--disable-||'`
-         [ -z "`echo $COMMAND_LINE_OPTS | grep -i $disable`" ] && print_help && exit 1
-         eval HAVE_`echo $disable | tr '[a-z]' '[A-Z]'`=no
-         ;;
-
-      -h|--help)
-         print_help
-         exit 0
-         ;;
-      *)
-         print_help
-         exit 1
-         ;;
-
-   esac
-
-   shift
-
-done
-
+. ./qb.comp.sh
 . ./config.libs.sh
 
 

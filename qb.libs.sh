@@ -1,10 +1,17 @@
-TEMP_C=.tmp.c
-TEMP_EXE=.tmp
-
-[ -z $CC ] && CC=cc
-[ -z $CXX ] && CXX=c++
 
 PKG_CONF_USED=""
+CONFIG_DEFINES=""
+MAKEFILE_DEFINES=""
+
+add_define_header()
+{
+   CONFIG_DEFINES="$CONFIG_DEFINES:@$1@$2@:"
+}
+
+add_define_make()
+{
+   MAKEFILE_DEFINES="$MAKEFILE_DEFINES:@$1@$2@:"
+}
 
 check_lib()
 {
@@ -79,6 +86,14 @@ check_switch()
    rm -rf $TEMP_C $TEMP_EXE
 }
 
+output_define_header()
+{
+   arg1="`echo $2 | sed 's|^@\([^@]\+\)@\([^@]*\)@$|\1|'`"
+   arg2="`echo $2 | sed 's|^@\([^@]\+\)@\([^@]*\)@$|\2|'`"
+
+   echo "#define $arg1 $arg2" >> "$outfile"
+}
+
 create_config_header()
 {
    outfile="$1"
@@ -100,7 +115,25 @@ create_config_header()
    done
 
    echo "" >> "$outfile"
+
+   tmpdefs="$CONFIG_DEFINES"
+   while [ ! -z "$tmpdefs" ]
+   do
+      subdefs="`echo $tmpdefs | sed 's|^:\(@[^@]\+@[^@]\+@\):.*$|\1|'`"
+      tmpdefs="`echo $tmpdefs | sed 's|^\W\+$||'`"
+      tmpdefs="`echo $tmpdefs | sed 's|^:\(@[^@]\+@[^@]\+@\):||'`"
+      output_define_header "$outfile" "$subdefs"
+   done
+
    echo "#endif" >> "$outfile"
+}
+
+output_define_make()
+{
+   arg1="`echo $2 | sed 's|^@\([^@]\+\)@\([^@]*\)@$|\1|'`"
+   arg2="`echo $2 | sed 's|^@\([^@]\+\)@\([^@]*\)@$|\2|'`"
+
+   echo "$arg1 = $arg2" >> "$outfile"
 }
 
 create_config_make()
@@ -135,8 +168,21 @@ create_config_make()
          echo "$1_LIBS = $tmpval" >> "$outfile"
       fi
 
+     
       shift
    done
+
+   echo "" >> "$outfile"
+
+   tmpdefs="$MAKEFILE_DEFINES"
+   while [ ! -z "$tmpdefs" ]
+   do
+      subdefs="`echo $tmpdefs | sed 's|^:\(@[^@]\+@[^@]\+@\):.*$|\1|'`"
+      tmpdefs="`echo $tmpdefs | sed 's|^\W\+$||'`"
+      tmpdefs="`echo $tmpdefs | sed 's|^:\(@[^@]\+@[^@]\+@\):||'`"
+      output_define_make "$outfile" "$subdefs"
+   done
+
 }
 
 
