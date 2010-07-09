@@ -1,30 +1,28 @@
+. ./conf.comp.sh
+
 TEMP_C=.tmp.c
 TEMP_CXX=.tmp.cxx
 TEMP_EXE=.tmp
 
-NEED_C="yes"
-NEED_CPP="no"
-
-# Checks if we would need to compile C and/or C++
-
-if [ -z "`find . -name '*.c' | head -n1`" ]; then
-   NEED_C="no"
+echo -n "Checking operating system ... "
+OS="Win32" # whatever ;D
+unamestr="`uname -o`"
+if [ ! -z "`echo $unamestr | grep -i Linux`" ]; then
+   OS="Linux"
+elif [ ! -z "`echo $unamestr | grep -i Darwin`" ]; then
+   OS="Darwin"
+elif [ ! -z "`echo $unamestr | grep -i BSD`" ]; then
+   OS="BSD"
+elif [ ! -z "`echo $unamestr | grep -i NT`" ]; then
+   OS="Cygwin"
 fi
 
-if [ ! -z "`find . -name '*.cpp' | head -n1`" ]; then
-   NEED_CPP="yes"
-elif [ ! -z "`find . -name '*.cxx' | head -n1`" ]; then
-   NEED_CPP="yes"
-elif [ ! -z "`find . -name '*.C' | head -n1`" ]; then
-   NEED_CPP="yes"
-elif [ ! -z "`find . -name '*.cc' | head -n1`" ]; then
-   NEED_CPP="yes"
-fi
+echo $OS
 
 
 # Checking for working C compiler
-if [ $NEED_C = yes ]; then
-   echo "C source seems to be present; checking for working C compiler ..."
+if [ "$USE_LANG_C" = yes ]; then
+   echo "Checking for working C compiler ..."
    if [ -z $CC ]; then
       CC=`which gcc cc 2> /dev/null | grep ^/ | head -n 1`
    fi
@@ -46,8 +44,8 @@ if [ $NEED_C = yes ]; then
 fi
 
 # Checking for working C++ compiler
-if [ $NEED_CPP = yes ]; then
-   echo "C++ source seems to be present; checking for working C++ compiler ..."
+if [ "$USE_LANG_CXX" = "yes" ]; then
+   echo "Checking for working C++ compiler ..."
    if [ -z $CXX ]; then
       CXX=`which g++ c++ 2> /dev/null | grep ^/ | head -n 1`
    fi
