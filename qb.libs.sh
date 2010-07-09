@@ -1,4 +1,5 @@
 
+PKG_CONF_PATH=""
 PKG_CONF_USED=""
 CONFIG_DEFINES=""
 MAKEFILE_DEFINES=""
@@ -53,8 +54,18 @@ check_lib()
    [ "$tmpval" = "yes" ] && [ "$answer" = "no" ] && echo "Forced to build with library $2, but cannot locate. Exiting ..." && exit 1
 }
 
+locate_pkg_conf()
+{
+   echo -n "Checking for pkg-config ... "
+   PKG_CONF_PATH="`which pkg-config | grep ^/ | head -n1`"
+   [ -z $PKG_CONF_PATH ] && echo "not found" && echo "Cannot locate pkg-config. Exiting ..." && exit 1
+   echo "$PKG_CONF_PATH"
+}
+
 check_pkgconf()
 {
+   [ -z "$PKG_CONF_PATH" ] && locate_pkg_conf
+
    tmpval="HAVE_$1"
    eval tmpval=\$$tmpval
    [ "$tmpval" = "no" ] && return 0
