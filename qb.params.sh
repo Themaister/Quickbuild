@@ -1,8 +1,8 @@
-COMMAND_LINE_OPTS=""
+COMMAND_LINE_OPTS_ENABLE=""
 
-add_command_line_opt()
+add_command_line_enable()
 {
-   COMMAND_LINE_OPTS="$COMMAND_LINE_OPTS:\"$1\" \"$2\" \"$3\":"
+   COMMAND_LINE_OPTS_ENABLE="$COMMAND_LINE_OPTS_ENABLE:\"$1\" \"$2\" \"$3\":"
    eval HAVE_$1=$3
 }
 
@@ -27,7 +27,7 @@ print_help()
    echo ""
    echo "Custom options:"
 
-   tmpopts="$COMMAND_LINE_OPTS"
+   tmpopts="$COMMAND_LINE_OPTS_ENABLE"
    while [ ! -z "$tmpopts" ]
    do
       subopts="`echo $tmpopts | sed 's|^:"\([^"]\+\)"."\([^"]\+\)"."\([^"]\+\)":.*$|"\1":"\2":"\3"|'`"
@@ -69,13 +69,13 @@ parse_input()
 
          --enable-*)
             enable=`echo $1 | sed 's|^--enable-||'`
-            [ -z "`echo $COMMAND_LINE_OPTS | grep -i $enable`" ] && print_help && exit 1
+            [ -z "`echo $COMMAND_LINE_OPTS_ENABLE | grep -i $enable`" ] && print_help && exit 1
             eval HAVE_`echo $enable | tr '[a-z]' '[A-Z]'`=yes
             ;;
 
          --disable-*)
             disable=`echo $1 | sed 's|^--disable-||'`
-            [ -z "`echo $COMMAND_LINE_OPTS | grep -i $disable`" ] && print_help && exit 1
+            [ -z "`echo $COMMAND_LINE_OPTS_ENABLE | grep -i $disable`" ] && print_help && exit 1
             eval HAVE_`echo $disable | tr '[a-z]' '[A-Z]'`=no
             ;;
 
