@@ -4,6 +4,7 @@ CONFIG_DEFINES=""
 MAKEFILE_DEFINES=""
 INCLUDE_DIRS=""
 LIBRARY_DIRS=""
+PREFIX="/usr/local"
 
 add_define_header()
 {
@@ -136,7 +137,12 @@ create_config_header()
    do
       tmpval="HAVE_$1"
       eval tmpval=\$$tmpval
-      [ $tmpval = yes ] && echo "#define HAVE_$1 1" >> "$outfile"
+      if [ "$tmpval" = "yes" ]; then 
+         echo "#define HAVE_$1 1" >> "$outfile"
+      elif [ "$tmpval" = "no" ]; then
+         echo "/* #undef HAVE_$1 */" >> "$outfile"
+      fi
+
       shift
    done
 
@@ -169,12 +175,19 @@ create_config_make()
 
    rm -rf "$outfile"
    touch "$outfile"
-   echo "CC = $CC" >> "$outfile"
-   echo "CXX = $CXX" >> "$outfile"
-   echo "CFLAGS = $CFLAGS" >> "$outfile"
-   echo "CXXFLAGS = $CXXFLAGS" >> "$outfile"
+   if [ "$USE_LANG_C" = "yes" ]; then
+      echo "CC = $CC" >> "$outfile"
+      echo "CFLAGS = $CFLAGS" >> "$outfile"
+   fi
+   if [ "$USE_LANG_CXX" = "yes" ]; then
+      echo "CXX = $CXX" >> "$outfile"
+      echo "CXXFLAGS = $CXXFLAGS" >> "$outfile"
+   fi
    echo "INCLUDE_DIRS = $INCLUDE_DIRS" >> "$outfile"
    echo "LIBRARY_DIRS = $LIBRARY_DIRS" >> "$outfile"
+   echo "PACKAGE_NAME = $PACKAGE_NAME" >> "$outfile"
+   echo "PACKAGE_VERSION = $PACKAGE_VERSION" >> "$outfile"
+   echo "PREFIX = $PREFIX" >> "$outfile"
 
    while [ ! -z "$1" ]
    do

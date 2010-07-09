@@ -1,9 +1,10 @@
 CC = /usr/bin/gcc
-CXX = 
 CFLAGS = 
-CXXFLAGS = 
 INCLUDE_DIRS =  -I/usr/local/include -I/usr/include
 LIBRARY_DIRS =  -L/usr/local/lib -L/usr/lib
+PACKAGE_NAME = rsound
+PACKAGE_VERSION = 0.9.4
+PREFIX = /usr/local
 HAVE_ALSA = 1
 ALSA_CFLAGS = -I/usr/include/alsa
 ALSA_LIBS = -lasound
