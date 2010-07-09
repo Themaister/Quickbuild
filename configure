@@ -1,11 +1,18 @@
 #!/bin/sh
 
+echo ""
+
 . ./config.params.sh
 
 parse_input "$@"
 
 . ./qb.comp.sh
 . ./config.libs.sh
+
+echo ""
+echo ""
+echo "==========================================================================="
+echo "Configuration completed. Type 'make' ('gmake' for BSD systems) to compile."
 
 
 

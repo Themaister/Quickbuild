@@ -7,6 +7,6 @@
 #define HAVE_OSS 1
 #define HAVE_RSOUND 1
 
-#define winrar pwns
+#define FAIL(x) ((x)?do(x):0)
 #define i pwn
 #endif

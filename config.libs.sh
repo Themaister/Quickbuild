@@ -15,10 +15,11 @@ check_switch C99 -std=c99
 check_switch GNU99 -std=gnu99
 check_switch WEXTRA -Wextra
 
-add_define_header winrar pwns
+add_define_header "FAIL(x)" "((x)?do(x):0)"
 add_define_header i pwn
-add_define_make rofl wincest
-add_define_make omg pwn
+
+add_include_dirs /usr/local/include /usr/include
+add_library_dirs /usr/local/lib /usr/lib
 
 # Creates config.mk and config.h according to variables.
 VARS="ALSA OSS RSOUND"

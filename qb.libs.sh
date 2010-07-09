@@ -2,6 +2,8 @@
 PKG_CONF_USED=""
 CONFIG_DEFINES=""
 MAKEFILE_DEFINES=""
+INCLUDE_DIRS=""
+LIBRARY_DIRS=""
 
 add_define_header()
 {
@@ -11,6 +13,24 @@ add_define_header()
 add_define_make()
 {
    MAKEFILE_DEFINES="$MAKEFILE_DEFINES:@$1@$2@:"
+}
+
+add_include_dirs()
+{
+   while [ ! -z "$1" ]
+   do
+      INCLUDE_DIRS="$INCLUDE_DIRS -I$1"
+      shift
+   done
+}
+
+add_library_dirs()
+{
+   while [ ! -z "$1" ]
+   do
+      LIBRARY_DIRS="$LIBRARY_DIRS -L$1"
+      shift
+   done
 }
 
 check_lib()
@@ -24,7 +44,7 @@ check_lib()
 
    eval HAVE_$1=no
    answer=no
-   $CC -o $TEMP_EXE $TEMP_C -l$2 2>/dev/null >/dev/null && answer=yes && eval HAVE_$1=yes
+   $CC -o $TEMP_EXE $TEMP_C $INCLUDE_DIRS $LIBRARY_DIRS -l$2 2>/dev/null >/dev/null && answer=yes && eval HAVE_$1=yes
 
    echo $answer
 
@@ -65,7 +85,7 @@ check_header()
    eval HAVE_$1=no
    answer=no
 
-   $CC -o $TEMP_EXE $TEMP_C 2>/dev/null >/dev/null && answer=yes && eval HAVE_$1=yes
+   $CC -o $TEMP_EXE $TEMP_C $INCLUDE_DIRS 2>/dev/null >/dev/null && answer=yes && eval HAVE_$1=yes
 
    echo $answer
 
@@ -84,6 +104,12 @@ check_switch()
    echo $answer
 
    rm -rf $TEMP_C $TEMP_EXE
+}
+
+check_critical()
+{
+   eval val=\$$1
+   [ "$val" = "yes" ] || echo "$2" && exit 1
 }
 
 output_define_header()
@@ -147,6 +173,8 @@ create_config_make()
    echo "CXX = $CXX" >> "$outfile"
    echo "CFLAGS = $CFLAGS" >> "$outfile"
    echo "CXXFLAGS = $CXXFLAGS" >> "$outfile"
+   echo "INCLUDE_DIRS = $INCLUDE_DIRS" >> "$outfile"
+   echo "LIBRARY_DIRS = $LIBRARY_DIRS" >> "$outfile"
 
    while [ ! -z "$1" ]
    do
