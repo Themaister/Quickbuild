@@ -126,6 +126,8 @@ create_config_header()
    outfile="$1"
    shift
 
+   echo "Creating config header: $outfile"
+
    name="`echo __$outfile | sed 's|[\./]|_|g' | tr '[a-z]' '[A-Z]'`"
    echo "#ifndef $name" > "$outfile"
    echo "#define $name" >> "$outfile"
@@ -170,8 +172,11 @@ output_define_make()
 
 create_config_make()
 {
+
    outfile="$1"
    shift
+
+   echo "Creating make config: $outfile"
 
    rm -rf "$outfile"
    touch "$outfile"
