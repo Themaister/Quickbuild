@@ -11,9 +11,9 @@ check_pkgconf RSOUND rsound 0.9.4
 # Checks the presence of a header file
 check_header OSS sys/soundcard.h
 
-check_switch C99 -std=c99
-check_switch GNU99 -std=gnu99
-check_switch WEXTRA -Wextra
+check_switch_c C99 -std=c99
+check_switch_c GNU99 -std=gnu99
+check_switch_c WEXTRA -Wextra
 
 add_define_header "FAIL(x)" "((x)?do(x):0)"
 add_define_header i pwn

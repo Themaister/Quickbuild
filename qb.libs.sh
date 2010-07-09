@@ -94,9 +94,10 @@ check_header()
    [ "$tmpval" = "yes" ] && [ "$answer" = "no" ] && echo "Build assumed that $2 exists, but cannot locate. Exiting ..." && exit 1
 }
 
-check_switch()
+check_switch_c()
 {
-   echo -n "Checking for availability of switch $2 ... "
+   echo -n "Checking for availability of switch $2 in $CC ... "
+   [ -z "$CC" ] && echo "No C compiler, cannot check ..." && exit 1
    echo "int main(void) { return 0; }" > $TEMP_C
    eval HAVE_$1=no
    answer=no
@@ -107,10 +108,25 @@ check_switch()
    rm -rf $TEMP_C $TEMP_EXE
 }
 
+check_switch_cxx()
+{
+   echo -n "Checking for availability of switch $2 in $CXX ... "
+   [ -z "$CXX" ] && echo "No C++ compiler, cannot check ..." && exit 1
+   echo "int main() { return 0; }" > $TEMP_CXX
+   eval HAVE_$1=no
+   answer=no
+   $CXX -o $TEMP_EXE $TEMP_CXX $2 2>/dev/null >/dev/null && answer=yes && eval HAVE_$1=yes
+
+   echo $answer
+
+   rm -rf $TEMP_CXX $TEMP_EXE
+}
+
 check_critical()
 {
-   eval val=\$$1
-   [ "$val" = "yes" ] || echo "$2" && exit 1
+   val=HAVE_$1
+   eval val=\$$val
+   [ "$val" = "yes" ] || (echo "$2" && exit 1)
 }
 
 output_define_header()
