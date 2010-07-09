@@ -131,8 +131,8 @@ check_critical()
 
 output_define_header()
 {
-   arg1="`echo $2 | sed 's|^@\([^@]\+\)@\([^@]*\)@$|\1|'`"
-   arg2="`echo $2 | sed 's|^@\([^@]\+\)@\([^@]*\)@$|\2|'`"
+   arg1="`echo $2 | sed 's|^@\([^@]*\)@\([^@]*\)@$|\1|'`"
+   arg2="`echo $2 | sed 's|^@\([^@]*\)@\([^@]*\)@$|\2|'`"
 
    echo "#define $arg1 $arg2" >> "$outfile"
 }
@@ -169,9 +169,9 @@ create_config_header()
    tmpdefs="$CONFIG_DEFINES"
    while [ ! -z "$tmpdefs" ]
    do
-      subdefs="`echo $tmpdefs | sed 's|^:\(@[^@]\+@[^@]\+@\):.*$|\1|'`"
-      tmpdefs="`echo $tmpdefs | sed 's|^\W\+$||'`"
-      tmpdefs="`echo $tmpdefs | sed 's|^:\(@[^@]\+@[^@]\+@\):||'`"
+      subdefs="`echo $tmpdefs | sed 's|^:\(@[^@]*@[^@]*@\):.*$|\1|'`"
+      tmpdefs="`echo $tmpdefs | sed 's|^\W*$||'`"
+      tmpdefs="`echo $tmpdefs | sed 's|^:\(@[^@]*@[^@]*@\):||'`"
       output_define_header "$outfile" "$subdefs"
    done
 
@@ -180,8 +180,8 @@ create_config_header()
 
 output_define_make()
 {
-   arg1="`echo $2 | sed 's|^@\([^@]\+\)@\([^@]*\)@$|\1|'`"
-   arg2="`echo $2 | sed 's|^@\([^@]\+\)@\([^@]*\)@$|\2|'`"
+   arg1="`echo $2 | sed 's|^@\([^@]*\)@\([^@]*\)@$|\1|'`"
+   arg2="`echo $2 | sed 's|^@\([^@]*\)@\([^@]*\)@$|\2|'`"
 
    echo "$arg1 = $arg2" >> "$outfile"
 }
@@ -239,9 +239,9 @@ create_config_make()
    tmpdefs="$MAKEFILE_DEFINES"
    while [ ! -z "$tmpdefs" ]
    do
-      subdefs="`echo $tmpdefs | sed 's|^:\(@[^@]\+@[^@]\+@\):.*$|\1|'`"
-      tmpdefs="`echo $tmpdefs | sed 's|^\W\+$||'`"
-      tmpdefs="`echo $tmpdefs | sed 's|^:\(@[^@]\+@[^@]\+@\):||'`"
+      subdefs="`echo $tmpdefs | sed 's|^:\(@[^@]*@[^@]*@\):.*$|\1|'`"
+      tmpdefs="`echo $tmpdefs | sed 's|^\W*$||'`"
+      tmpdefs="`echo $tmpdefs | sed 's|^:\(@[^@]*@[^@]*@\):||'`"
       output_define_make "$outfile" "$subdefs"
    done
 

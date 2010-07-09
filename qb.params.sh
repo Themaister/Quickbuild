@@ -30,9 +30,9 @@ print_help()
    tmpopts="$COMMAND_LINE_OPTS_ENABLE"
    while [ ! -z "$tmpopts" ]
    do
-      subopts="`echo $tmpopts | sed 's|^:"\([^"]\+\)"."\([^"]\+\)"."\([^"]\+\)":.*$|"\1":"\2":"\3"|'`"
-      tmpopts="`echo $tmpopts | sed 's|^\W\+$||'`"
-      tmpopts="`echo $tmpopts | sed 's|^:"[^"]\+"."[^"]\+"."[^"]\+":||'`"
+      subopts="`echo $tmpopts | sed 's|^:"\([^"]*\)"."\([^"]*\)"."\([^"]*\)":.*$|"\1":"\2":"\3"|'`"
+      tmpopts="`echo $tmpopts | sed 's|^\W*$||'`"
+      tmpopts="`echo $tmpopts | sed 's|^:"[^"]*"."[^"]*"."[^"]*":||'`"
       print_sub_opt "$subopts"
    done
    
@@ -40,9 +40,9 @@ print_help()
 
 print_sub_opt()
 {
-   arg1="`echo $1 | sed 's|^"\([^"]\+\)":"\([^"]\+\)":"\([^"]\+\)"$|\1|'`"
-   arg2="`echo $1 | sed 's|^"\([^"]\+\)":"\([^"]\+\)":"\([^"]\+\)"$|\2|'`"
-   arg3="`echo $1 | sed 's|^"\([^"]\+\)":"\([^"]\+\)":"\([^"]\+\)"$|\3|'`"
+   arg1="`echo $1 | sed 's|^"\([^"]*\)":"\([^"]*\)":"\([^"]*\)"$|\1|'`"
+   arg2="`echo $1 | sed 's|^"\([^"]*\)":"\([^"]*\)":"\([^"]*\)"$|\2|'`"
+   arg3="`echo $1 | sed 's|^"\([^"]*\)":"\([^"]*\)":"\([^"]*\)"$|\3|'`"
 
    lowertext="`echo $arg1 | tr '[A-Z]' '[a-z]'`"
 
