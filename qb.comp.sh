@@ -1,4 +1,4 @@
-. ./conf.comp.sh
+. qb/conf.comp.sh
 
 TEMP_C=.tmp.c
 TEMP_CXX=.tmp.cxx
