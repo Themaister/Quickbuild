@@ -64,8 +64,7 @@ print_sub_opt()
    lowertext="`echo $arg1 | tr '[A-Z]' '[a-z]'`"
 
    if [ "$arg3" = "auto" ]; then
-      echo -n "--enable-$lowertext: "
-      echo $arg2
+      echo "--enable-$lowertext: $arg2"
       echo "--disable-$lowertext"
    elif [ "$arg3" = "yes" ]; then
       echo "--disable-$lowertext: $arg2"
@@ -95,7 +94,7 @@ parse_input()
       case "$1" in
 
          --prefix=*)
-            prefix="`echo $1 | sed -e 's|^--prefix=\(\S\S*\)$|\1|' -e 's|\(\S\S*\)/$|\1|'`"
+            prefix="`echo $1 | sed -e 's|^--prefix=||' -e 's|^\(.*\)/$|\1|'`"
 
             if [ "$prefix" != "$1" ]; then
                PREFIX="$prefix"
@@ -103,8 +102,9 @@ parse_input()
             ;;
 
          --enable-*)
-            enable=`echo $1 | sed 's|^--enable-||'`
-            if [ -z "`echo $COMMAND_LINE_OPTS_ENABLE | grep -i $enable`" ]; then
+            tmp="$1"
+            enable="${tmp#--enable-}"
+            if [ -z "`echo $COMMAND_LINE_OPTS_ENABLE | grep -i -- $enable`" ]; then
                print_help
                exit 1
             fi
@@ -112,8 +112,9 @@ parse_input()
             ;;
 
          --disable-*)
-            disable=`echo $1 | sed 's|^--disable-||'`
-            if [ -z "`echo $COMMAND_LINE_OPTS_ENABLE | grep -i $disable`" ]; then
+            tmp="$1"
+            disable="${tmp#--disable-}"
+            if [ -z "`echo $COMMAND_LINE_OPTS_ENABLE | grep -i -- $disable`" ]; then
                print_help
                exit 1
             fi
@@ -121,9 +122,11 @@ parse_input()
             ;;
 
          --with-*)
-            arg="`echo $1 | sed 's|^--with-\S\S*=||'`"
-            with=`echo $1 | sed 's|^--with-\(\S\S*\)=.*$|\1|'`
-            if [ -z "`echo $COMMAND_LINE_OPTS_STRINGS | grep -i $with`" ]; then
+            tmp="$1"
+            arg="${tmp#--with-*=}"
+            tmp="${tmp#--with-}"
+            with="${tmp%%=*}"
+            if [ -z "`echo $COMMAND_LINE_OPTS_STRINGS | grep -i -- $with`" ]; then
                print_help
                exit 1
             fi

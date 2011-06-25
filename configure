@@ -2,12 +2,10 @@
 
 echo ""
 
-. ./config.params.sh
+. qb/config.params.sh
 
 parse_input "$@"
 
-. ./qb.comp.sh
-. ./config.libs.sh
-
-
+. qb/qb.comp.sh
+. qb/config.libs.sh
 
