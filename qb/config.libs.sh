@@ -1,80 +1,43 @@
 . qb/qb.libs.sh
 
+# Check if compiler switch is present
 check_switch_c C99 -std=gnu99
+
+# If feature C99 failed, die.
 check_critical C99 "Cannot find C99 compatible compiler."
 
+# This is a shell script after all, so we can do custom script stuff as well.
 if [ "$OS" = BSD ]; then
-   DYLIB=-lc
+   echo "This is BSD! :O"
+   # Adds a custom define to Makefile config.
+   add_define_make has_bsd 1
 else
-   DYLIB=-ldl
+   echo "This is not BSD :D"
+   add_define_make has_bsd 0
 fi
 
-if [ "$HAVE_DYNAMIC" = "yes" ] && [ "$HAVE_CONFIGFILE" = "no" ]; then
-   echo "Cannot have dynamic loading of libsnes and no configfile support."
-   echo "Dynamic loading requires config file support."
-   exit 1
-fi
+# Check features. 
+# If auto, HAVE_FEATURE1 etc will be set to either "yes" or "no".
+# If --enable-feature1 has been used, a check will be performed and it will die should it fail.
+# If --enable-feature1 has been disabled, the check will be skipped.
+check_lib FEATURE1 -lc socket
+check_lib FEATURE2 -lc bind
+check_lib FEATURE3 -lc connect
 
-if [ $HAVE_DYNAMIC != yes ]; then
-   check_lib_cxx SNES $LIBSNES snes_init $DYLIB
-   check_critical SNES "Cannot find libsnes."
-   add_define_make libsnes $LIBSNES
-fi
+# Checks if we can find printf in -lc. Use C++ linker.
+check_lib_cxx LIBC -lc printf
 
-check_lib DYLIB $DYLIB dlopen
-check_lib NETPLAY -lc socket
+# Checks if we can locate a certain header.
+check_header STDIO stdio.h
 
-check_lib ALSA -lasound snd_pcm_open
-check_header OSS sys/soundcard.h
-check_header OSS_BSD soundcard.h
-check_lib OSS_LIB -lossaudio
+# Checks if we can find a certain package.
+check_pkgconf ALSA alsa
 
-if [ "$OS" = "Darwin" ]; then
-   check_lib AL "-framework OpenAL" alcOpenDevice
-else
-   check_lib AL -lopenal alcOpenDevice
-fi
+# Set the path we got from ./configure --with-feature_path= (or the default)
+add_define_make feature_path $FEATURE_PATH
 
-if [ "$OS" = "Darwin" ]; then
-   check_lib FBO "-framework OpenGL" glFramebufferTexture2D
-else
-   check_lib FBO -lGL glFramebufferTexture2D
-fi
-
-check_pkgconf RSOUND rsound 1.1
-check_lib ROAR -lroar roar_vs_new
-check_pkgconf JACK jack 0.120.1
-check_pkgconf PULSE libpulse
-
-check_pkgconf SDL sdl 1.2.10
-check_critical SDL "Cannot find SDL library."
-
-check_lib CG -lCg cgCreateContext
-check_pkgconf XML libxml-2.0
-check_pkgconf SDL_IMAGE SDL_image
-
-if [ $HAVE_FFMPEG != no ]; then
-   check_pkgconf AVCODEC libavcodec
-   check_pkgconf AVFORMAT libavformat
-   check_pkgconf AVUTIL libavutil
-   check_pkgconf SWSCALE libswscale
-
-   ( [ $HAVE_FFMPEG = auto ] && ( [ $HAVE_AVCODEC = no ] || [ $HAVE_AVFORMAT = no ] || [ $HAVE_AVUTIL = no ] || [ $HAVE_SWSCALE = no ] ) && HAVE_FFMPEG=no ) || HAVE_FFMPEG=yes
-fi
-
-check_pkgconf SRC samplerate
-
-check_lib DYNAMIC $DYLIB dlopen
-
-check_pkgconf FREETYPE freetype2
-check_pkgconf XVIDEO xv
-
-check_lib STRL -lc strlcpy
-
-check_pkgconf PYTHON python3
-
-# Creates config.mk and config.h.
-VARS="ALSA OSS OSS_BSD OSS_LIB AL RSOUND ROAR JACK PULSE SDL DYLIB CG XML SDL_IMAGE DYNAMIC FFMPEG AVCODEC AVFORMAT AVUTIL SWSCALE SRC CONFIGFILE FREETYPE XVIDEO NETPLAY FBO STRL PYTHON"
+# Creates config.mk and config.h. Export these variables.
+VARS="FEATURE1 FEATURE2 FEATURE3 LIBC STDIO ALSA"
 create_config_make config.mk $VARS
 create_config_header config.h $VARS
 
